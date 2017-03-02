@@ -16,7 +16,7 @@ $('#upload-input').on('change', function(){
         for (var i = 0; i < files.length; i++) {
             var extn = files[i].name.split(".").pop();
             if (extn == 'wav' | extn == 'mp3') { // Limit file types
-                // TODO: Verify this doesn't cause problems
+                // TODO: Verify this doesn't cause problems, still doesn't notify
                 var file = files[i];
                 // add the files to formData object for the data payload
                 formData.append('uploads[]', file, file.name);

@@ -5,6 +5,7 @@ var app = require('../server').app;
 var formidable = require('formidable');
 var fs = require('fs');
 var path = require('path');
+var sox = require('sox'); // For file transcoding
 
 router.use('/room', require('./music_room'))
 
