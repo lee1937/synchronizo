@@ -4,11 +4,6 @@
   "description": "A webapp for synchronized music listening",
   "license": "Apache-2.0",
   "dependencies": {
-<<<<<<< HEAD
-    "express": "^4.14.1",
-    "nunjucks": "^3.0.0",
-    "formidable" : "^1.1.1",
-=======
     "express": "^4.15.0",
     "express-session": "^1.15.1",
     "id3-parser": "^1.2.0",
@@ -19,7 +14,6 @@
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",
     "socket.io": "^1.7.3"
->>>>>>> upstream/master
   },
   "scripts": {
     "start": "node server.js",
@@ -34,8 +28,6 @@
     "coveralls": "^2.11.16",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
-    "chai" : "^3.5.0",
-    "chai-http" : "^3.0.0",
     "sinon" : "^1.17.7",
     "should": "^11.2.0",
     "supertest": "^3.0.0"
