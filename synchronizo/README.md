@@ -11,6 +11,8 @@ Here lives the source code for the Synchronizo webapp.
 `/controllers` handles routing requests to the appropriate locations. All the
 main routing code can be found under `/controllers/index.js`
 
+`/helpers` contain helper modules used all throughout the project.
+
 `/views` has all the templates used to render Synchronizo pages, this is further
 split into folders depending on which routes use the templates.
 
@@ -35,3 +37,25 @@ If developing, you may want to `npm install -g nodemon` and then use
 
 1. Change into this directory
 2. `npm test`
+
+## Configuration
+
+`config.js` is the configuration file for the project.  It is part of .gitignore
+to avoid accidentally committing secrets etc to version control. An example
+of a config file is like this:
+
+```js
+var config = {};
+
+config.sessionSecret = "RANDOM STRING";
+
+config.lastfm = {};
+config.lastfm.api_key = "API_KEY";
+config.lastfm.secret = "SECRET";
+
+config.facebook = {};
+config.facebook.app_id = "APP_ID";
+config.facebook.secret = "SECRET";
+
+module.exports = config;
+```

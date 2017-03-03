@@ -8,6 +8,8 @@ var path = require('path');
 var sox = require('sox'); // For file transcoding
 
 router.use('/room', require('./music_room'))
+router.use('/api', require('./api'))
+
 
 router.get('/', function(req, res) {
     var rooms = [];
@@ -16,6 +18,7 @@ router.get('/', function(req, res) {
         rooms.push(app.locals.rooms[room]);
     }
 
+    console.log(req.user);
     res.render('public/index.html', {rooms: rooms});
 });
 
