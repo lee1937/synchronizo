@@ -216,6 +216,14 @@ io.on('connection', function(socket) {
         });
     });
 
+    socket.on('play-all', function() {
+        // Send play signal to all Users in list
+    });
+
+    socket.on('pause-all', function() {
+        // Send pause signal to all Users in list
+    });
+
     socket.on('disconnect', function (data) {
         console.log('user disconnected');
 
