@@ -18,4 +18,3 @@ router.get('/', function(req, res) {
 });
 
 module.exports = router;
-Contact GitHub API Training Shop Blog About
