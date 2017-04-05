@@ -88,6 +88,14 @@ MusicRoom.prototype.findUploadingSong = function(filename) {
     return null;
 }
 
+MusicRoom.prototype.playAll = function() {
+    // Send stuff to all users
+}
+
+MusicRoom.prototype.pauseAll = function() {
+    // Send stuff to all users
+}
+
 var prefixes = ['New', 'Big', 'Great', 'Small', 'Bad', 'Real', 'Best', 'Only'];
 var suffixes = ['Cat', 'Dog', 'Cheetah', 'Horse', 'Rabbit', 'Hare', 'Owl'];
 function generateRandomRoomName() {
