@@ -222,6 +222,14 @@ $( document ).ready(function() {
         }).click();
     });
 
+    $("#play-button").click(function() {
+        // Do stuff here
+    });
+
+    $("#pause-button").click(function() {
+        // Do stuff here
+    });
+
     var fileToUpload;
 
     function onFileSelect(file) {

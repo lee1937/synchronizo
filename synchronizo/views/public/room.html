@@ -78,11 +78,18 @@ wavesurfer.on('ready', function () {
                     <button type="button" class="btn btn-primary btn-large" aria-label="Fast-Backward">
                         <span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
                     </button>
-                    <!-- These need to be changed. They currently only update the client who pressed them -->
+                    <!-- These need to be changed. They currently only update the client who pressed them
                     <button onclick="wavesurfer.play()" type="button" class="btn btn-primary btn-large" aria-label="Play">
                         <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                    </button> -->
+                    <button id="play-button" class="btn btn-primary btn-large" aria-label="Play">
+                        <span class="glyphicon glyphicon-play"aria-hidden="true"></span>
                     </button>
+                    <!-- Update pause for all users
                     <button onclick="wavesurfer.pause()" type="button" class="btn btn-primary btn-large" aria-label="Pause">
+                        <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                    </button> -->
+                    <button id="pause-button" class="btn btn-primary btn-large" aria-label="Pause">
                         <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
                     </button>
                     <!-- Still need to implement Fast-Backward -->
