@@ -298,4 +298,10 @@ $( document ).ready(function() {
             })
         });
     });
+    $("#play-button").click(function() {
+        // Send signal to server-side
+    });
+    $("#pause-button").click(function()) {
+        // Send signal to server-side
+    });
 });
