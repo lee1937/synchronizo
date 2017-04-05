@@ -7,9 +7,9 @@ var wavesurfer = WaveSurfer.create({
     container: '#waveform',
     scrollParent: false,
     backend: 'MediaElement'
-}); */
+});
 
-/* Only start playing once waveform is drawn and audio is ready
+// Only start playing once waveform is drawn and audio is ready
 wavesurfer.on('ready', function () {
     wavesurfer.play();
 }); */
