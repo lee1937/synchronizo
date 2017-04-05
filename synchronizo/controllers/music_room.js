@@ -218,10 +218,12 @@ io.on('connection', function(socket) {
 
     socket.on('play-all', function() {
         // Send play signal to all Users in list
+        room.playAll;
     });
 
     socket.on('pause-all', function() {
         // Send pause signal to all Users in list
+        room.pauseAll;
     });
 
     socket.on('disconnect', function (data) {
