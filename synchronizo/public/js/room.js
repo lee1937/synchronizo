@@ -2,6 +2,17 @@
 var socket = io();
 var users = {};
 var songs = {};
+/*
+var wavesurfer = WaveSurfer.create({
+    container: '#waveform',
+    scrollParent: false,
+    backend: 'MediaElement'
+}); */
+
+/* Only start playing once waveform is drawn and audio is ready
+wavesurfer.on('ready', function () {
+    wavesurfer.play();
+}); */
 
 socket.on('connect', function(data) {
     socket.emit('join', {room: ROOM_NAME, authToken: AUTH_TOKEN});
@@ -32,6 +43,22 @@ socket.on('changeSong', function(id) {
     console.log("song changing to " + id);
 
     onSongChange(id);
+});
+
+// When someone (owner) presses play, play the song
+socket.on('play-all', function() {
+    if (wavesurfer.isPlaying()) {
+        console.log('User is already playing');
+    }
+    wavesurfer.play();
+});
+
+// When someone (owner) presses pause, pause the song
+socket.on('pause-all', function() {
+    if (!wavesurfer.isPlaying()) {
+        console.log('User is already paused!');
+    }
+    wavesurfer.pause();
 });
 
 var RETRIEVING_ALREADY = false;
@@ -220,55 +247,55 @@ $( document ).ready(function() {
             var file = this.files[0];
             onFileSelect(file);
         }).click();
-    });
 
-    var fileToUpload;
+        var fileToUpload;
 
-    function onFileSelect(file) {
-        $("#upload-button").addClass("disabled");
-        var blob = file.slice(0, 2048);
+        function onFileSelect(file) {
+            $("#upload-button").addClass("disabled");
+            var blob = file.slice(0, 2048);
 
-        socket.emit('preUploadMeta', {filename: file.name, metadata: blob});
+            socket.emit('preUploadMeta', {filename: file.name, metadata: blob});
 
-        fileToUpload = file;
-    }
-
-    socket.on('uploadApproved', function() {
-        if (fileToUpload) {
-            console.log("Upload approved");
-
-            var xhr = new XMLHttpRequest();
-
-            if (xhr.upload) {
-                xhr.upload.onprogress = onProgress;
-            }
-            xhr.onreadystatechange = function(e) {
-                if (this.readyState == 4) {
-                    $("#upload-button").removeClass("disabled");
-                }
-            };
-
-            xhr.open('POST', ROOM_NAME + "/upload", true);
-
-            var formData = new FormData();
-            formData.append("song", fileToUpload);
-            xhr.send(formData);
+            fileToUpload = file;
         }
-    });
 
-    function onProgress(e) {
-        var done = e.position || e.loaded, total = e.totalSize || e.total;
-        var percentage = Math.floor(done/total*1000)/10;
+        socket.on('uploadApproved', function() {
+            if (fileToUpload) {
+                console.log("Upload approved");
 
-        socket.emit('uploadProgress', percentage);
-    }
+                var xhr = new XMLHttpRequest();
 
-    socket.on('uploadDisapproved', function() {
-        $("#upload-button").removeClass("disabled");
+                if (xhr.upload) {
+                    xhr.upload.onprogress = onProgress;
+                }
+                xhr.onreadystatechange = function(e) {
+                    if (this.readyState == 4) {
+                        $("#upload-button").removeClass("disabled");
+                    }
+                };
 
-        var error = $("#error");
-        error.fadeIn('slow', function() {
-            error.fadeOut('slow');
-        })
+                xhr.open('POST', ROOM_NAME + "/upload", true);
+
+                var formData = new FormData();
+                formData.append("song", fileToUpload);
+                xhr.send(formData);
+            }
+        });
+
+        function onProgress(e) {
+            var done = e.position || e.loaded, total = e.totalSize || e.total;
+            var percentage = Math.floor(done/total*1000)/10;
+
+            socket.emit('uploadProgress', percentage);
+        }
+
+        socket.on('uploadDisapproved', function() {
+            $("#upload-button").removeClass("disabled");
+
+            var error = $("#error");
+                error.fadeIn('slow', function() {
+                error.fadeOut('slow');
+            })
+        });
     });
 });
