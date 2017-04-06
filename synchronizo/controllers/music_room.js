@@ -129,6 +129,15 @@ io.on('connection', function(socket) {
             console.log('user leaving room ' + joinedRoom.name);
         }
     });
+    socket.on('play-all', function() {
+        // Send play signal to all Users in list
+        joinedRoom.playAll();
+    });
+
+    socket.on('pause-all', function() {
+        // Send pause signal to all Users in list
+        joinedRoom.pauseAll();
+    });
 });
 
 module.exports = router;
