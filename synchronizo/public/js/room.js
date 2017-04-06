@@ -14,6 +14,20 @@ socket.on('songUpdate', function(data) {
     console.log(data);
 });
 
+socket.on('changeSong', function(id) {
+    console.log("song changing to " + id);
+
+    onSongChange(id);
+});
+
+socket.on('playCommand', function() {
+    wavesurfer.play();
+});
+
+socket.on('pauseCommand', function() {
+    wavesurfer.pause();
+});
+
 function onNewUserJoin(username) {
     var user = new User(username);
     users.push(user);
