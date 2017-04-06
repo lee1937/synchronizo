@@ -218,13 +218,20 @@ io.on('connection', function(socket) {
 
     socket.on('play-all', function() {
         // Send play signal to all Users in list
-        console.log('kill me');
         joinedRoom.playAll();
     });
 
     socket.on('pause-all', function() {
         // Send pause signal to all Users in list
-        room.pauseAll;
+        joinedRoom.pauseAll();
+    });
+
+    socket.on('prevTrack-all', function() {
+        // TODO: Implement this once queue works properly
+    });
+
+    socket.on('nextTrack-all', function() {
+        // TODO: Implement this once queue works properly
     });
 
     socket.on('disconnect', function (data) {
