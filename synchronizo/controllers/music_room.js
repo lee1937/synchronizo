@@ -218,7 +218,8 @@ io.on('connection', function(socket) {
 
     socket.on('play-all', function() {
         // Send play signal to all Users in list
-        room.playAll;
+        console.log('kill me');
+        joinedRoom.playAll();
     });
 
     socket.on('pause-all', function() {

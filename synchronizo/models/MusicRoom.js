@@ -90,10 +90,12 @@ MusicRoom.prototype.findUploadingSong = function(filename) {
 
 MusicRoom.prototype.playAll = function() {
     // Send stuff to all users
+    console.log('One day more');
 }
 
 MusicRoom.prototype.pauseAll = function() {
     // Send stuff to all users
+    console.log('fuck it');
 }
 
 var prefixes = ['New', 'Big', 'Great', 'Small', 'Bad', 'Real', 'Best', 'Only'];
