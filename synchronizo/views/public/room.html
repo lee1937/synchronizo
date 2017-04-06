@@ -7,6 +7,11 @@
 {% block bodyend %}
 <script>
 var ROOM_NAME = "{{ room.name }}";
+{% if user %}
+    var AUTH_TOKEN = "{{ user.socketioToken }}";
+{% else %}
+    var AUTH_TOKEN = null;
+{% endif %}
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
@@ -14,13 +19,20 @@ var ROOM_NAME = "{{ room.name }}";
 <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.3.2/wavesurfer.min.js"></script>
 
 <script>
-$( document ).ready(function() {
-    var wavesurfer = WaveSurfer.create({
-        container: '#waveform',
-        scrollParent: false,
-    });
-    wavesurfer.load('http://ia902606.us.archive.org/35/items/shortpoetry_047_librivox/song_cjrg_teasdale_64kb.mp3');
+var wavesurfer = WaveSurfer.create({
+    container: '#waveform',
+    scrollParent: false,
+    backend: 'MediaElement'
 });
+wavesurfer.on('ready', function () {
+    wavesurfer.play();
+});
+</script>
+
+<script>
+function PlayCtrl() {
+    var socket = io();
+}
 </script>
 {% endblock %}
 
@@ -36,13 +48,15 @@ $( document ).ready(function() {
 </script>
 <script id='songDisplayTemplate' language="text">
     <div class="song">
-        <img width="220" height="220" src="{album-art}" class="img-rounded" data-toggle="tooltip" data-placement="left">
+        <a href="#" class="album-art-link">
+            <img width="220" height="220" src="{album-art}" class="img-rounded" data-toggle="tooltip" data-placement="left">
+        </a>
         <div class="progress progress-striped active">
             <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
             </div>
         </div>
         <figcaption>
-            <span title="{artist}" class="artist">
+            <span class="artist">
                 <a href="#">{artist}</a>
             </span>
             <span class="album" title="{album}">{album}</span>
@@ -66,20 +80,22 @@ $( document ).ready(function() {
 
         <div class="row">
             <div class="col-md-4 text-center">
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-primary btn-large" aria-label="Play">
+                <div ng-controller="myCtrl" class="btn-group" role="group" aria-label="...">
+                    <!-- All buttons send an emit signal to the server except for upload, which is handled via script -->
+                    <button onclick="socket.emit('prevTrack-all')" type="button" class="btn btn-primary btn-large" aria-label="Fast-Backward">
+                        <span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
+                    </button>
+                    <button onclick="socket.emit('play-all')" type="button" class="btn btn-primary btn-large" aria-label="Play">
                         <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
                     </button>
-                    <button type="button" class="btn btn-default btn-large" aria-label="Pause">
+                    <button onclick="socket.emit('pause-all')" type="button" class="btn btn-primary btn-large" aria-label="Pause">
                         <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
                     </button>
-                    <button class="btn btn-primary btn-large">
-                        <a href="/upload"
-                            <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
-                        </a>
-                        <a href="/upload"
-                            <b>Add Music</b>
-                        </a>
+                    <button onclick="socket.emit('nextTrack-all')" type="button" class="btn btn-primary btn-large" aria-label="Fast-Backward">
+                        <span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
+                    </button>
+                    <button id="upload-button" class="btn btn-info btn-large">
+                        <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> <b>Add Music</b>
                     </button>
                 </div>
 
@@ -103,19 +119,22 @@ $( document ).ready(function() {
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        What's playing?
-                        <span class="pull-right" style="font-weight:bold">My Bloody Valentine</span>
+                        Artist Info
+                        <span id="artist-info-name" class="pull-right" style="font-weight:bold">
+                            My Bloody Valentine
+                        </span>
                         <div class="clearfix"></div>
                     </div>
                     <div class="panel-body">
                         <div class="container-fluid">
+                            <div style="display: none" id="artist-loader" class="loader">Loading...</div>
                             <div class="row">
                                 <div class="col-md-offset-1 col-md-10">
-                                    <img src="https://lastfm-img2.akamaized.net/i/u/770x0/04571c1dc99c449057c71a58ec34db16.jpg" class="img-circle img-responsive">
+                                    <img id="artist-image" src="https://lastfm-img2.akamaized.net/i/u/770x0/04571c1dc99c449057c71a58ec34db16.jpg" class="img-circle img-responsive">
                                 </div>
                             </div>
                             <div style="margin-top:20px" class="row">
-                                <div class="col-md-12">
+                                <div id="artist-bio" class="col-md-12">
                                     <p>My Bloody Valentine is a shoegaze band formed in late 1983 in Dublin, Ireland. The band’s best known lineup is Kevin Shields (vocals, guitar), Bilinda Butcher
                                         (vocals, guitar), Debbie Googe (bass) and Colm Ó Cíosóig (drums). Their 1988 album Isn't Anything is generally regarded as one of the most influential records
                                         of the period, acting as an important precursor to the early '90s "shoegazing" scene. </p>
@@ -133,21 +152,7 @@ $( document ).ready(function() {
             <div class="col-md-8">
                 <div class="panel panel-primary">
                     <div class="panel-heading">What's queued?</div>
-                    <div class="panel-body">
-                        <div data-song-id="1" id="song-1" class="song">
-                            <img width="220" height="220" src="https://lastfm-img2.akamaized.net/i/u/300x300/9a68a84e53d74c59cc679892d63c32bd.png" class="img-rounded" data-toggle="tooltip" data-placement="left" data-original-title="Uploaded by ammar">
-                            <div class="progress progress-striped active">
-                                <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-                                </div>
-                            </div>
-                            <figcaption>
-                                <span title="65daysofstatic" class="artist">
-                                    <a href="#" onclick="getInfo(this)">65daysofstatic</a>
-                                </span>
-                                <span class="album" title="Heavy Sky EP">Heavy Sky EP</span>
-                                <span title="Pacify" class="title">Pacify</span>
-                            </figcaption>
-                        </div>
+                    <div id="song-container" class="panel-body">
                     </div>
                 </div>
             </div>
