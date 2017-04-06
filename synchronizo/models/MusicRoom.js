@@ -90,7 +90,19 @@ MusicRoom.prototype.findUploadingSong = function(filename) {
 
 MusicRoom.prototype.playAll = function() {
     // Send stuff to all users
-    console.log('One day more');
+    // Made it this far!!
+    console.log('Sending play to all users');
+    for (var i =0; i < this.users.length; i++) {
+        this.users[i].socket.emit('playCommand');
+    }
+}
+
+MusicRoom.prototype.pauseAll = function() {
+    // Send pause command to all users
+    console.log('Sending pause to all users');
+    for (var i = 0; i < this.users.length; i++) {
+        users[i].socket.emit('pauseCommand');
+    }
 }
 
 MusicRoom.prototype.pauseAll = function() {

@@ -34,6 +34,14 @@ socket.on('changeSong', function(id) {
     onSongChange(id);
 });
 
+socket.on('playCommand', function() {
+    wavesurfer.play();
+});
+
+socket.on('pauseCommand', function() {
+    wavesurfer.pause();
+});
+
 var RETRIEVING_ALREADY = false;
 function retrieveArtistInfo(artist) {
     if (RETRIEVING_ALREADY) {
