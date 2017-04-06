@@ -45,7 +45,22 @@ MusicRoom.prototype.findUploadingSong = function(filename) {
 
     return null;
 }
+MusicRoom.prototype.playAll = function() {
+    // Send stuff to all users
+    // Made it this far!!
+    console.log('Sending play to all users');
+    for (var i =0; i < this.users.length; i++) {
+        this.users[i].socket.emit('playCommand');
+    }
+}
 
+MusicRoom.prototype.pauseAll = function() {
+    // Send pause command to all users
+    console.log('Sending pause to all users');
+    for (var i = 0; i < this.users.length; i++) {
+        this.users[i].socket.emit('pauseCommand');
+    }
+}
 var prefixes = ['New', 'Big', 'Great', 'Small', 'Bad', 'Real', 'Best', 'Only'];
 var suffixes = ['Cat', 'Dog', 'Cheetah', 'Horse', 'Rabbit', 'Hare', 'Owl'];
 function generateRandomRoomName() {
