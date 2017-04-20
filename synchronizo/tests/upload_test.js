@@ -1,12 +1,15 @@
 var request = require('supertest');
 var should = require('should');
 var formidable = require('formidable');
+<<<<<<< HEAD
 
 /*
  * Potentially use https://goo.gl/7cU0rv for upload.js script
  * details helpful usage of browser variable. Once tests are written,
  * move /javascripts to /controllers
  */
+=======
+>>>>>>> 008ebc2bc40422531647ff14369a481187267d99
 
 describe('loading upload', function () {
     var server;

@@ -243,6 +243,15 @@ io.on('connection', function(socket) {
             onUserRoomQuit(joinedRoom, user);
         }
     });
+    socket.on('play-all', function() {
+        // Send play signal to all Users in list
+        joinedRoom.playAll();
+    });
+
+    socket.on('pause-all', function() {
+        // Send pause signal to all Users in list
+        joinedRoom.pauseAll();
+    });
 });
 
 module.exports = router;

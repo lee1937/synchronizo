@@ -42,6 +42,7 @@ socket.on('pauseCommand', function() {
     wavesurfer.pause();
 });
 
+<<<<<<< HEAD
 var RETRIEVING_ALREADY = false;
 function retrieveArtistInfo(artist) {
     if (RETRIEVING_ALREADY) {
@@ -59,6 +60,25 @@ function retrieveArtistInfo(artist) {
                     $("#artist-bio").text("Failed to retrieve information");
                     return;
                 }
+=======
+socket.on('changeSong', function(id) {
+    console.log("song changing to " + id);
+
+    onSongChange(id);
+});
+
+socket.on('playCommand', function() {
+    wavesurfer.play();
+});
+
+socket.on('pauseCommand', function() {
+    wavesurfer.pause();
+});
+
+function onNewUserJoin(username) {
+    var user = new User(username);
+    users.push(user);
+>>>>>>> 008ebc2bc40422531647ff14369a481187267d99
 
                 $("#artist-bio").html(data.bio);
                 $("#artist-info-name").text(data.artist);
