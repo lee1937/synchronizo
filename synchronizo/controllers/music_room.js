@@ -88,6 +88,8 @@ router.post('/:roomName/upload', upload.single('song'), function (req, res) {
             console.log("Uploaded song", song);
 
             res.status(204).end();
+        }, function onNewMetadata(song) {
+            emitSongUpdate(room, song);
         });
     } else {
         res.status(500).end();
@@ -113,6 +115,16 @@ function onUserRoomJoin(room, user) {
     // propogate currently joined users to this room
     for (var i = 0; i < room.users.length; i++) {
         user.socket.emit('newUserJoin', room.users[i].summarize());
+    }
+    // propogate last 100 messages
+    for (var i = 0; i < room.messages.length; i++) {
+        var message = room.messages[i];
+        // avoid animating every message except the last
+        // to prevent animating a lot for existing messages
+        if (i != room.messages.length - 1) {
+            message.noAnimate = true;
+        }
+        user.socket.emit('onMessage', room.messages[i]);
     }
     // propogate currently added songs
     for (var i = 0; i < room.songs.length; i++) {
@@ -144,6 +156,7 @@ function getUser(authToken, socket) {
 
     var user = new User(profile.displayName, socket);
     user.avatar = "https://graph.facebook.com/" + profile.id + "/picture?type=large";
+    user.globalId = profile.globalId;
     return user;
 }
 
@@ -168,12 +181,56 @@ io.on('connection', function(socket) {
         onUserRoomJoin(room, user);
     });
 
+    socket.on('sendMessage', function(message) {
+        if (!joinedRoom) {
+            return;
+        }
+
+        joinedRoom.messageSent(user, message);
+    });
+
+    socket.on('playSong', function() {
+        if (!joinedRoom) {
+            return;
+        }
+        joinedRoom.playSong(user);
+    });
+
+    socket.on('pauseSong', function() {
+        if (!joinedRoom) {
+            return;
+        }
+        joinedRoom.pauseSong(user);
+    });
+
+    socket.on('nextSong', function() {
+        if (!joinedRoom) {
+            return;
+        }
+        joinedRoom.nextSong(user);
+    });
+
+    socket.on('previousSong', function() {
+        if (!joinedRoom) {
+            return;
+        }
+        joinedRoom.previousSong(user);
+    });
+
     socket.on('clientChangeSong', function(id) {
         if (!joinedRoom) {
             return;
         }
 
         joinedRoom.changeSong(id);
+    });
+
+    socket.on('seekSong', function(data) {
+        if (!joinedRoom) {
+            return;
+        }
+
+        joinedRoom.seekSong(user, data.progress);
     });
 
     socket.on('uploadProgress', function(data) {
@@ -208,30 +265,12 @@ io.on('connection', function(socket) {
 
             song.updateFromLastFM(function() {
                 console.log(user.name + " uploading ", song.summarize());
-                joinedRoom.addSong(song);
+                joinedRoom.addSong(user, song);
 
                 socket.emit('uploadApproved');
                 emitSongUpdate(joinedRoom, song);
             });
         });
-    });
-
-    socket.on('play-all', function() {
-        // Send play signal to all Users in list
-        joinedRoom.playAll();
-    });
-
-    socket.on('pause-all', function() {
-        // Send pause signal to all Users in list
-        joinedRoom.pauseAll();
-    });
-
-    socket.on('prevTrack-all', function() {
-        // TODO: Implement this once queue works properly
-    });
-
-    socket.on('nextTrack-all', function() {
-        // TODO: Implement this once queue works properly
     });
 
     socket.on('disconnect', function (data) {
@@ -242,15 +281,6 @@ io.on('connection', function(socket) {
 
             onUserRoomQuit(joinedRoom, user);
         }
-    });
-    socket.on('play-all', function() {
-        // Send play signal to all Users in list
-        joinedRoom.playAll();
-    });
-
-    socket.on('pause-all', function() {
-        // Send pause signal to all Users in list
-        joinedRoom.pauseAll();
     });
 });
 
